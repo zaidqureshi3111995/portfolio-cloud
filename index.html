@@ -10,29 +10,34 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
 
         body {
-            background-color: #f4f6f8;
-            color: #333;
+            /* Light grey background ki jagah naya soft blue-grey */
+            background-color: #eef2f7; 
+            color: #2d3436;
             line-height: 1.6;
         }
 
         header {
-            background: #1e293b;
+            /* Header ka color naya 'Royal Blue' gradient kar diya hai */
+            background: linear-gradient(135deg, #0984e3, #2d3436);
             color: white;
-            padding: 40px 20px;
+            padding: 60px 20px;
             text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         header h1 {
-            font-size: 36px;
+            font-size: 42px;
+            letter-spacing: 1px;
         }
 
         header p {
-            font-size: 18px;
+            font-size: 20px;
             margin-top: 10px;
+            color: #dfe6e9;
         }
 
         section {
@@ -43,50 +48,73 @@
 
         h2 {
             margin-bottom: 20px;
-            color: #1e293b;
-            border-bottom: 2px solid #1e293b;
+            /* Headings ka color naya Blue kar diya hai */
+            color: #0984e3;
+            border-bottom: 3px solid #0984e3;
             display: inline-block;
+            padding-bottom: 5px;
         }
 
         .about p {
             margin-top: 10px;
-            font-size: 16px;
+            font-size: 17px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .skills ul {
             list-style: none;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
             margin-top: 20px;
         }
 
         .skills li {
+            /* Skills boxes ka border aur hover effect */
             background: white;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #2d3436;
+            border-left: 5px solid #0984e3;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .skills li:hover {
+            transform: translateY(-5px);
+            background: #0984e3;
+            color: white;
         }
 
         .projects .project {
             background: white;
-            padding: 20px;
+            padding: 25px;
             margin-top: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 5px solid #0984e3;
+        }
+
+        .projects h3 {
+            color: #0984e3;
+            margin-bottom: 10px;
         }
 
         footer {
-            background: #1e293b;
+            background: #2d3436;
             color: white;
             text-align: center;
-            padding: 20px;
-            margin-top: 40px;
+            padding: 30px;
+            margin-top: 50px;
         }
 
-        footer a {
-            color: #38bdf8;
-            text-decoration: none;
+        .contact b {
+            color: #0984e3;
         }
     </style>
 </head>
@@ -94,14 +122,14 @@
 
 <header>
     <h1>Zaid Irfan</h1>
-    <p>Student | Web Developer | SQL & Flutter Learner</p>
+    <p>🚀 Student | Web Developer | DevOps Learner</p>
 </header>
 
 <section class="about">
     <h2>About Me</h2>
     <p>
         I am a motivated student with interest in web development, databases, and mobile app development.
-        I enjoy learning new technologies and building practical projects to improve my skills.
+        Currently learning CI/CD pipelines and Cloud technologies to build scalable applications.
     </p>
 </section>
 
@@ -109,11 +137,11 @@
     <h2>Skills</h2>
     <ul>
         <li>HTML & CSS</li>
-        <li>Basic JavaScript</li>
-        <li>SQL & Database Concepts</li>
-        <li>Flutter (Beginner)</li>
-        <li>Problem Solving</li>
-        <li>Team Work</li>
+        <li>JavaScript</li>
+        <li>SQL & Databases</li>
+        <li>Flutter</li>
+        <li>Jenkins & Docker</li>
+        <li>SonarQube</li>
     </ul>
 </section>
 
@@ -126,13 +154,13 @@
     </div>
 
     <div class="project">
-        <h3>Flutter UI App</h3>
-        <p>A basic Flutter app using ListView, InkWell, and Stack widgets.</p>
+        <h3>DevOps Pipeline</h3>
+        <p>Automated CI/CD pipeline using Jenkins, SonarQube, and Docker Deployment.</p>
     </div>
 
     <div class="project">
-        <h3>Personal Portfolio Website</h3>
-        <p>This portfolio website built using HTML and CSS.</p>
+        <h3>Personal Portfolio</h3>
+        <p>This modern portfolio website built and deployed using Docker.</p>
     </div>
 </section>
 
@@ -143,7 +171,7 @@
 </section>
 
 <footer>
-    <p>© 2025 Zaid Qureshi | All Rights Reserved</p>
+    <p>© 2025 Zaid Qureshi | Built with 💙 and DevOps</p>
 </footer>
 
 </body>
