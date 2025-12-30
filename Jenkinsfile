@@ -3,31 +3,37 @@ pipeline {
 
     environment {
         REPO_URL = 'https://github.com/zaidqureshi3111995/portfolio-cloud'
-        SONARQUBE = 'SonarQube-Server'             // Jenkins me configured SonarQube server name
-        DOCKER_SERVER = 'ubuntu@<DOCKER_PUBLIC_IP>' // Docker EC2 public IP + user
+        SONARQUBE = 'SonarQube-Server'
+        DOCKER_SERVER = 'ubuntu@<DOCKER_PUBLIC_IP>' 
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: "${REPO_URL}", credentialsId: 'github-credentials'
+                git branch: 'master', url: "${REPO_URL}"
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("${SONARQUBE}") {
-                    sh 'sonar-scanner'
+                script {
+                    def scannerHome = tool 'SonarQube Scanner'
+                    withSonarQubeEnv("${SONARQUBE}") {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
                 }
             }
         }
 
         stage('Docker Build & Deploy') {
             steps {
-                sshagent(['docker-credentials']) {  // Jenkins me add SSH key credentials for Docker server
+                sshagent(['docker-credentials']) { 
                     sh """
-                    ssh ${DOCKER_SERVER} '
-                        cd /home/ubuntu
+                    # 1. Copy files from Jenkins to Docker Server
+                    scp -o StrictHostKeyChecking=no portfolio.html Dockerfile ${DOCKER_SERVER}:/home/ubuntu/
+                    
+                    # 2. Build and Run on Docker Server
+                    ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER} '
                         docker build -t portfolio-app .
                         docker stop portfolio-app || true
                         docker rm portfolio-app || true
@@ -36,15 +42,6 @@ pipeline {
                     """
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Build, Test & Deploy Successful!'
-        }
-        failure {
-            echo '❌ Build Failed!'
         }
     }
 }
