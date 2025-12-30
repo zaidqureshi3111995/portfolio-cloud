@@ -33,24 +33,23 @@ pipeline {
         }
 
         stage('Docker Build & Deploy') {
-            steps {
-                sshagent(['docker-server-ssh']) {
-                    sh """
-                    # 1. Purani files saaf karke nayi copy karna
-                    scp -o StrictHostKeyChecking=no portfolio.html Dockerfile ${DOCKER_SERVER}:/home/ubuntu/
+    steps {
+        sshagent(['docker-server-ssh']) {
+            sh """
+            # portfolio ko potfolio kar diya
+            scp -o StrictHostKeyChecking=no potfolio.html Dockerfile ${DOCKER_SERVER}:/home/ubuntu/
 
-                    # 2. Docker commands execute karna
-                    ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER} '
-                        cd /home/ubuntu
-                        docker build -t portfolio-app .
-                        docker stop portfolio-app || true
-                        docker rm portfolio-app || true
-                        docker run -d -p 80:80 --name portfolio-app portfolio-app
-                    '
-                    """
-                }
-            }
+            ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER} '
+                cd /home/ubuntu
+                docker build -t portfolio-app .
+                docker stop portfolio-app || true
+                docker rm portfolio-app || true
+                docker run -d -p 80:80 --name portfolio-app portfolio-app
+            '
+            """
         }
+    }
+}
     }
 
     post {
