@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         REPO_URL = 'https://github.com/zaidqureshi3111995/portfolio-cloud'
-        SONARQUBE = 'SonarQube-Server'
-        DOCKER_SERVER = 'ubuntu@<DOCKER_PUBLIC_IP>' 
+        SONARQUBE = 'SonarQube-Server' // Manage Jenkins -> System mein yahi naam hona chahiye
+        DOCKER_SERVER = 'ubuntu@172.31.26.188' 
     }
 
     stages {
@@ -17,6 +17,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
+                    // Check karo Tools mein name 'SonarQube Scanner' hi hai na?
                     def scannerHome = tool 'SonarQube Scanner'
                     withSonarQubeEnv("${SONARQUBE}") {
                         sh "${scannerHome}/bin/sonar-scanner"
@@ -27,13 +28,15 @@ pipeline {
 
         stage('Docker Build & Deploy') {
             steps {
-                sshagent(['docker-credentials']) { 
+                // Humne jo ID credentials mein banayi thi wo use karo
+                sshagent(['docker-server-ssh']) { 
                     sh """
-                    # 1. Copy files from Jenkins to Docker Server
+                    # 1. Copy files to Docker Server
                     scp -o StrictHostKeyChecking=no portfolio.html Dockerfile ${DOCKER_SERVER}:/home/ubuntu/
                     
                     # 2. Build and Run on Docker Server
                     ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER} '
+                        cd /home/ubuntu/
                         docker build -t portfolio-app .
                         docker stop portfolio-app || true
                         docker rm portfolio-app || true
