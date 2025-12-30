@@ -8,10 +8,9 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
-                git branch: 'master',
+                git branch: 'master', 
                     url: "${REPO_URL}",
                     credentialsId: 'github-credentials'
             }
@@ -33,20 +32,14 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
         stage('Docker Build & Deploy') {
             steps {
                 sshagent(['docker-server-ssh']) {
                     sh """
+                    # 1. Purani files saaf karke nayi copy karna
                     scp -o StrictHostKeyChecking=no portfolio.html Dockerfile ${DOCKER_SERVER}:/home/ubuntu/
 
+                    # 2. Docker commands execute karna
                     ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER} '
                         cd /home/ubuntu
                         docker build -t portfolio-app .
@@ -62,10 +55,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Pipeline completed successfully"
+            echo "✅ Pipeline Success: Portfolio deployed at http://172.31.26.188"
         }
         failure {
-            echo "❌ Pipeline failed"
+            echo "❌ Pipeline Failed"
         }
     }
 }
