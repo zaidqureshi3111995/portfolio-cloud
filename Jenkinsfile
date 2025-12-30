@@ -33,28 +33,28 @@ pipeline {
         }
 
         stage('Docker Build & Deploy') {
-    steps {
-        sshagent(['docker-server-ssh']) {
-            sh """
-            # portfolio ko potfolio kar diya
-            scp -o StrictHostKeyChecking=no potfolio.html Dockerfile ${DOCKER_SERVER}:/home/ubuntu/
+            steps {
+                sshagent(['docker-server-ssh']) {
+                    sh """
+                    # Yahan ab index.html use ho raha hai
+                    scp -o StrictHostKeyChecking=no index.html Dockerfile ${DOCKER_SERVER}:/home/ubuntu/
 
-            ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER} '
-                cd /home/ubuntu
-                docker build -t portfolio-app .
-                docker stop portfolio-app || true
-                docker rm portfolio-app || true
-                docker run -d -p 80:80 --name portfolio-app portfolio-app
-            '
-            """
+                    ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER} '
+                        cd /home/ubuntu
+                        docker build -t portfolio-app .
+                        docker stop portfolio-app || true
+                        docker rm portfolio-app || true
+                        docker run -d -p 80:80 --name portfolio-app portfolio-app
+                    '
+                    """
+                }
+            }
         }
-    }
-}
     }
 
     post {
         success {
-            echo "✅ Pipeline Success: Portfolio deployed at http://172.31.26.188"
+            echo "✅ Deployment Successful: http://172.31.26.188"
         }
         failure {
             echo "❌ Pipeline Failed"

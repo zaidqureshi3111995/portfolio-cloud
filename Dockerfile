@@ -1,3 +1,4 @@
 FROM nginx:alpine
-COPY potfolio.html /usr/share/nginx/html/index.html
+# Spelling mistake fixed: potfolio.html -> index.html
+COPY index.html /usr/share/nginx/html/index.html
 EXPOSE 80
