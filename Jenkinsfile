@@ -2,24 +2,26 @@ pipeline {
     agent any
 
     environment {
-        REPO_URL = 'https://github.com/zaidqureshi3111995/portfolio-cloud'
-        SONARQUBE = 'SonarQube-Server' 
-        DOCKER_SERVER = 'ubuntu@172.31.26.188' 
+        REPO_URL      = 'https://github.com/zaidqureshi3111995/portfolio-cloud'
+        SONARQUBE_ENV = 'SonarQube-Server'
+        DOCKER_SERVER = 'ubuntu@172.31.26.188'
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
-                git branch: 'master', url: "${REPO_URL}"
+                git branch: 'master',
+                    url: "${REPO_URL}",
+                    credentialsId: 'github-credentials'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Tool name must match exactly what you saved in Manage Jenkins -> Tools
                     def scannerHome = tool 'SonarQube Scanner'
-                    withSonarQubeEnv("${SONARQUBE}") {
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
                         sh """
                         ${scannerHome}/bin/sonar-scanner \
                         -Dsonar.projectKey=portfolio-cloud \
@@ -31,16 +33,22 @@ pipeline {
             }
         }
 
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Docker Build & Deploy') {
             steps {
-                sshagent(['docker-server-ssh']) { 
+                sshagent(['docker-server-ssh']) {
                     sh """
-                    # 1. Copy files to Docker Server
                     scp -o StrictHostKeyChecking=no portfolio.html Dockerfile ${DOCKER_SERVER}:/home/ubuntu/
-                    
-                    # 2. Build and Run on Docker Server
+
                     ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER} '
-                        cd /home/ubuntu/
+                        cd /home/ubuntu
                         docker build -t portfolio-app .
                         docker stop portfolio-app || true
                         docker rm portfolio-app || true
@@ -49,6 +57,15 @@ pipeline {
                     """
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Pipeline completed successfully"
+        }
+        failure {
+            echo "❌ Pipeline failed"
         }
     }
 }
