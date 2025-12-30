@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         REPO_URL = 'https://github.com/zaidqureshi3111995/portfolio-cloud'
-        SONARQUBE = 'SonarQube-Server' // Manage Jenkins -> System mein yahi naam hona chahiye
+        SONARQUBE = 'SonarQube-Server' 
         DOCKER_SERVER = 'ubuntu@172.31.26.188' 
     }
 
@@ -17,10 +17,15 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Check karo Tools mein name 'SonarQube Scanner' hi hai na?
+                    // Tool name must match exactly what you saved in Manage Jenkins -> Tools
                     def scannerHome = tool 'SonarQube Scanner'
                     withSonarQubeEnv("${SONARQUBE}") {
-                        sh "${scannerHome}/bin/sonar-scanner"
+                        sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=portfolio-cloud \
+                        -Dsonar.projectName=portfolio-cloud \
+                        -Dsonar.sources=.
+                        """
                     }
                 }
             }
@@ -28,7 +33,6 @@ pipeline {
 
         stage('Docker Build & Deploy') {
             steps {
-                // Humne jo ID credentials mein banayi thi wo use karo
                 sshagent(['docker-server-ssh']) { 
                     sh """
                     # 1. Copy files to Docker Server
